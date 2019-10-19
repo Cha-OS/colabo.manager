@@ -23,7 +23,10 @@ let daysToMilliseconds = days => {
 
 const
   IS_PUBLIC = window.location.toString().includes('colabo.space'),
-  // TODO: Add private keys here
+  // place proper keys from `colabo.space-infrastructure-private/keys/google.md`
+  API_KEY = IS_PUBLIC ? 'xxx' : 'xxx',
+  CLIENT_ID = IS_PUBLIC ? 'xxx' : 'xxx',
+  PUBLIC_PRIVATE_DOC = ['1zYmWtZh0gNxhtFMC0YVwBwzfH9Iy_7viTFGo2Ot5B8s', 'yyy'],
   APIS = [{
     'gapi': 'spreadsheets',
     'discovery': 'https://sheets.googleapis.com/$discovery/rest?version=v4',
