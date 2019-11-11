@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        // next lines makes it sure it is JS standard browsers currently talk
+        // and that compiler knows about DOM specific types (`dom` in `lib`)
+        "target": "es6",
+        "module": "es2015",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "rootDir": "./",
+        "allowJs": true,
+        "outDir": "dist",
+        "preserveConstEnums": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "removeComments": false,
+        "noImplicitAny": false,
+        "listFiles": false,
+        "lib": [
+            "es6", 
+            "es2015.promise", 
+            "dom", 
+            "es2015"
+        ],
+        // do not generate corresponding .d.ts files
+        "declaration": false
+    },
+    "allowSyntheticDefaultImports": false,
+    "files": [
+        "lib/index.ts"
+    ],
+    "include": [
+    ],
+    "exclude": [
+        "**/*d.ts"
+    ],
+    "compileOnSave": false
+}

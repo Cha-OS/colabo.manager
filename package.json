@@ -1,0 +1,31 @@
+{
+    "name": "@colabo-manager/f-gantt",
+    "version": "0.3.1",
+    "description": "Component for creating gantt charts out of google sheets",
+    "private": false,
+    "publishConfig": {
+        "access": "public"
+    },
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Cha-OS/colabo"
+    },
+    "scripts": {
+        "build": "tsc"
+    },
+    "main": "dist/index.js",
+    "module": "dist/index.js",
+    "dependencies": {
+        "@types/d3": "^5.0.1",
+        "@types/gapi": "0.0.39",
+        "@types/gapi.auth2": "0.0.50",
+        "@types/gapi.client.sheets": "^4.0.2",
+        "@types/google.visualization": "0.0.49",
+        "billboard.js": "^1.6.2",
+        "d3": "^5.7.0",
+        "moment": "^2.22.2"
+    },
+    "peerDependenciesLocal": {},
+    "devDependencies": {}
+}

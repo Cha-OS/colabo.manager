@@ -51,7 +51,8 @@ export let login = (apiKey, clientId, apis) => {
         console.info('signinDialog');
         const SIGN_IN_ID = 'google-signin-button';
         // tell it is not default `Element`, but `HTMLInputElement`
-        let dialog = document.querySelector('#' + SIGN_IN_ID); // ok that it may be empty
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLDialogElement/showModal
+        let dialog = <HTMLDialogElement>document.querySelector('#' + SIGN_IN_ID); // ok that it may be empty
         let signinCheck = isSignedIn => {
             console.info(`signinCheck(${isSignedIn})`);
             if (isSignedIn) {
