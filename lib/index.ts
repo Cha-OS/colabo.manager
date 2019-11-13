@@ -232,6 +232,9 @@ async function displayGantt(rows:RowData[]) {
     let allRows:any[][] = [];
     let taskIds: { [taskId: string] : boolean; } = {};
     console.info("Converting raw rows into gantt data ...");
+
+    let isAnyRowWithTaskId:boolean = false;
+    let isAnyRowNonCommented:boolean = false;
     for (let rowNum = 0; rowNum < rows.length; rowNum++) {
         let row:RowData = rows[rowNum];
 
@@ -239,6 +242,8 @@ async function displayGantt(rows:RowData[]) {
         if(!row[COLUMN_TASK_ID]){
             console.log("[displayGantt]%s Missing the task id, skipping the row", getRowIdString(row[RAW_ROW_ID]));
             continue;
+        }else{
+            isAnyRowWithTaskId = true;
         }
 
         console.info("Currently parsing the row: ", row);
@@ -260,6 +265,8 @@ async function displayGantt(rows:RowData[]) {
         if (row[COLUMN_TASK_NAME] && row[COLUMN_TASK_NAME].startsWith('#')) {
             console.log("[displayGantt]%s Skipping row with task id: '%s' and task name: %s", getRowIdString(row[RAW_ROW_ID]), taskId, row[COLUMN_TASK_NAME]);
             continue;
+        }else{
+            isAnyRowNonCommented = true;
         }
         rowData.push(row[COLUMN_TASK_NAME]);
 
