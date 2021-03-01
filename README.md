@@ -10,6 +10,8 @@ Colabo.Manager uses public Google Chart and Google Drive JavaScript APIs, so the
 
 To **try it**, go to https://manager.colabo.space/#/#1zYmWtZh0gNxhtFMC0YVwBwzfH9Iy_7viTFGo2Ot5B8s where the demo sheet will be visualized as a gantt chart.
 
+[Demo sheets](https://drive.google.com/drive/folders/1U_DyMB6n5QGiscHY6zyJE3AtU19wCEsj)
+
 To **use it** yourself, make a copy of the demo sheet and start adding tasks!
 
 # Google Sheet parameters
