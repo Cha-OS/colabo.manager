@@ -1,7 +1,10 @@
+import "./auth.js";
+
 interface GanttVisualization{
     Gantt(HTMLElement):void;
 }
 interface GanttChart{
+	// https://developers.google.com/chart/interactive/docs/reference#datatable-class
     draw(data:google.visualization.DataTable, options:any);
 }
 
@@ -11,7 +14,7 @@ interface RowData{
 
 // we have to say `.js` extension explicitly here as browser would complain
 // https://github.com/microsoft/TypeScript/issues/16577
-import { login } from './auth.js';
+// import { login } from './auth.js';
 // Helper functions
 let daysToMilliseconds = days => {
     return parseInt(days, 10) * 24 * 60 * 60 * 1000;
@@ -47,10 +50,11 @@ const FIRST_ROW_ID = 2;
 
 const IS_PUBLIC = window.location.toString().includes('colabo.space');
 
+// OBSOLATED: `"You have created a new client application that uses libraries for user authentication or authorization that will soon be deprecated. New clients must use the new libraries instead; existing clients must also migrate before these libraries are deprecated. See the [Migration Guide](https://developers.google.com/identity/gsi/web/guides/gis-migration) for more information."`
 // place proper keys from `colabo.space-infrastructure-private/keys/google.md`
 // NOTE: But NOT IN TypeScript file, but in COMPILED JS file
-const API_KEY = IS_PUBLIC ? 'AIzaSyDfw7XQi9rLIpcaMtJ-HYg-bHi3zXuY2NI' : 'AIzaSyAw0yf380IIJSDJeuDhJjWgYIO0ma6ZCbg';
-const CLIENT_ID = IS_PUBLIC ? '1012833906465-p0bu6lel8ib0bapv07lj2321ookosl6u.apps.googleusercontent.com' : '918743316759-e79mcr3rks3t8291qopi82qb9i8ht5l8.apps.googleusercontent.com';
+const API_KEY = IS_PUBLIC ? 'AIzaSyDfw7XQi9rLIpcaMtJ-HYg-bHi3zXuY2NI' : 'AIzaSyC3Bc7pB9N2gJIDGzqdJjlkyPpSHBoBIIQ';
+const CLIENT_ID = IS_PUBLIC ? '1012833906465-p0bu6lel8ib0bapv07lj2321ookosl6u.apps.googleusercontent.com' : '439062454058-baj3c5sdof9ub1n2l3hctc7qln0cubdp.apps.googleusercontent.com';
 const PUBLIC_PRIVATE_DOC = ['1zYmWtZh0gNxhtFMC0YVwBwzfH9Iy_7viTFGo2Ot5B8s', '1ZkDfbfj3G_CONE22ap82dpgnOxQ9L33CQ5K74ZVPzrA'];
 
 const APIS = [{
@@ -65,6 +69,7 @@ const APIS = [{
             'https://www.googleapis.com/auth/drive.metadata.readonly'
         ]
     }, {
+		// https://developers.google.com/chart/interactive/docs/gallery/ganttchart
         'chart': 'gantt'
     }];
 
@@ -77,12 +82,12 @@ if (!IS_PUBLIC) {
 }
 
 // returns spreadshitID as a promise
-async function getSpreadshitId() {
+async function getSpreadshitId(): Promise<string> {
     console.log('Login finished, starting app init.');
     return new Promise(resolve => {
         let initFunction = () => {
             // get the google spreadsheet id
-            let hash:string = location.hash.replace('#', '').replace(/[?&].*/, '');
+            let hash: string = location.hash.replace('#', '').replace(/[?&].*/, '');
             if (hash) {
                 document.getElementById('sheet').setAttribute('href', 'https://docs.google.com/spreadsheets/d/' + hash + '/edit');
                 resolve(hash);
@@ -103,14 +108,15 @@ async function getSpreadshitId() {
 }
 
 // returns google Spreadsheet as a promise
-async function getSpreadsheet(sheetId:string) {
+async function getSpreadsheet(sheetId:string): Promise<gapi.client.Request<gapi.client.sheets.Spreadsheet>> {
     console.log('readGanttData', sheetId);
-    return gapi.client.sheets.spreadsheets.get({
+    const result: gapi.client.Request<gapi.client.sheets.Spreadsheet> = gapi.client.sheets.spreadsheets.get({
         'spreadsheetId': sheetId,
         'includeGridData': true,
         // Gets excess data from other tabs, but removes a round trip.  
         'fields': 'properties/title,sheets(properties(sheetId,title,gridProperties),data(rowData(values(formattedValue))))'
     });
+	return result;
 }
 
 // returns google Sheet as a promise
@@ -202,7 +208,8 @@ function getRowIdString(rowNum:number|string):string{
     return "[data-row:" +rowNum+ " (sheet-row:" +(parseInt(''+rowNum)+FIRST_ROW_ID-1)+ ")]";
 }
 
-async function displayGantt(rows:RowData[]) {
+// https://developers.google.com/chart/interactive/docs/quick_start
+async function displayGantt(rows:RowData[]): Promise<void> {
     // the column names that the Google Gantt chart expects
     const COLUMN_GANTT_TASK_ID = 'Task ID';
     const COLUMN_GANTT_TASK_NAME = 'Task Name';
@@ -215,6 +222,7 @@ async function displayGantt(rows:RowData[]) {
 
     // console.log('displayGantt converted rows', rows);
     // create google DataTable
+	// https://developers.google.com/chart/interactive/docs/reference#datatable-class
     let data:google.visualization.DataTable = new google.visualization.DataTable();
 
     // create the column names that the Google Gantt chart expects
@@ -323,16 +331,48 @@ async function displayGantt(rows:RowData[]) {
     data.addRows(allRows);
 
     // set Gantt Chart Options
-    let options = {
-        gantt: {
-            trackHeight: 30,
-            defaultStartDateMillis: new Date(),
-            criticalPathEnabled: true,
-            criticalPathStyle: {
-                stroke: '#e64a19',
-                strokeWidth: 5
-            }
-        }
+	let options = {
+		gantt: {
+			trackHeight: 30,
+			defaultStartDateMillis: new Date(),
+			criticalPathEnabled: false,
+			criticalPathStyle: {
+				stroke: '#e64a19',
+				strokeWidth: 5
+			},
+			labelMaxWidth: 700,
+			labelStyle: {
+				fontName: "Ariel",
+				fontSize: 27,
+				color: '#757575'
+			},
+			barHeight: 20,
+			shadowEnabled: true,
+			sortTasks: false,
+			// https://stackoverflow.com/questions/35165271/customize-the-bar-colors-in-google-gantt-charts
+			palette: [
+				{
+					"color": "#7a7a7a",
+					"dark": "#7a7a7a",
+					"light": "#ff8888"
+				},
+				{
+					"color": "#0a710c",
+					"dark": "#0a710c",
+					"light": "#88ff88"
+				},
+				{
+					"color": "#000088",
+					"dark": "#000088",
+					"light": "#8888ff"
+				},
+				{
+					"color": "#8888ff",
+					"dark": "#8888ff",
+					"light": "#ffff88"
+				},
+			]
+		}
     };
     // drawing Google Gantt Chart
     console.log('Drawing chart');
@@ -342,16 +382,19 @@ async function displayGantt(rows:RowData[]) {
     chart.draw(data, options);
 }
 
-login(API_KEY, CLIENT_ID, APIS)
-    .then(getSpreadshitId)
-    .then(getSpreadsheet)
-    .then(getSheet)
-    .then(getRawRows)
-    .then(displayGantt)
-    .catch(error => {
-    console.error("General Error", error);
-    alert('App error, see console.');
-});
+export const startWork: Function = async() => {
+	try {
+		const documentId: string = await getSpreadshitId();
+		const spreadshit: gapi.client.Response<gapi.client.sheets.Spreadsheet> = await getSpreadsheet(documentId);
+		const sheet: gapi.client.sheets.Sheet = await getSheet(spreadshit);
+		const rows: RowData[]  = await getRawRows(sheet);
+		await displayGantt(rows);
+	} catch(error) {
+		console.error("General Error", error);
+		alert('App error, see console.');
+	}
+}
+
 // TODO: Set up listeners
 /*
 google.visualization.events.addListener(chart, 'click', targetId => {

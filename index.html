@@ -10,11 +10,7 @@
   <script src="//www.gstatic.com/external_hosted/material_design_lite/mdl_all_js_compiled.js"></script>
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script src="https://apis.google.com/js/api.js"></script>
-
-  <script type="module" src="dist/lib/auth.js"></script>
-  <script type="module" src="dist/lib/index.js"></script>
-  
+  <script src="https://apis.google.com/js/api.js"></script>  
   
   <style>
     #chart_div {
@@ -35,6 +31,9 @@
         <span class="mdl-layout-title" id="pageTitle">Colabo.Manager Gantt</span>
         <span id="pageBrand">@ <a href="https://manager.colabo.space/">Colabo.Manager</a></span>
         <div class="mdl-layout-spacer"></div>
+		<!--Add buttons to initiate auth sequence and sign out-->
+		<button id="authorize_button" onclick="handleAuthClick()">Authorize</button>
+		<button id="signout_button" onclick="handleSignoutClick()">Sign Out</button>
         <a id="sheet" class="mdl-navigation__link" target="_blank" href="">Edit</a>
       </div>
     </header>
@@ -44,7 +43,7 @@
       </div>
     </main>
   </div>
-
+  
   <dialog id="instructions-dialog">
     <img alt="logo" src="https://colabo.space/data/images/logos/colabo-logo-with-url.png"/ width="250px">
     <p>View <a target="_blank" href="/#1zYmWtZh0gNxhtFMC0YVwBwzfH9Iy_7viTFGo2Ot5B8s">working demo and starter spreadsheet</a>.</p>
@@ -73,5 +72,77 @@
 
 </script>
 
+<!-- <script type="module" src="dist/lib/auth.js"></script>
+<script type="module" src="dist/lib/index.js"></script> -->
+
+<script type="module" src="dist/lib/auth.js"></script>
+<script type="module" src="dist/lib/index.js"></script> -->
+
+<script type="module" >
+	import {gapiLoaded, gisLoaded, handleAuthClick } from "./dist/lib/auth.js";
+	import {startWork} from "./dist/lib/index.js";
+
+	// https://stackoverflow.com/questions/73280065/referenceerror-exported-function-is-not-defined-at-onload
+	// https://stackoverflow.com/questions/49338193/how-to-use-code-from-script-with-type-module
+	console.log(`[auth.js] Registering globally "gapiLoaded": ${typeof gapiLoaded} and "gisLoaded": ${typeof gisLoaded}`)
+	window.gapiLoaded = gapiLoaded;
+	window.gisLoaded = gisLoaded;
+	window.handleAuthClick = handleAuthClick;
+	window.startWork = startWork;
+
+	// https://technotrampoline.com/articles/how-to-programmatically-add-script-tags-to-your-react-application/
+	// https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script
+	const api_script = document.createElement('script');
+	api_script.setAttribute('src','https://apis.google.com/js/api.js');
+	api_script.defer = true;
+	api_script.async = true;
+	api_script.onload = () => {
+		console.log(`[api_script.onload]`);
+		gapiLoaded();
+	}
+	document.body.appendChild(api_script);
+
+	const client_script = document.createElement('script');
+	client_script.setAttribute('src','https://accounts.google.com/gsi/client');
+	client_script.defer = true;
+	client_script.async = true;
+	client_script.onload = () => {
+		console.log(`[client_script.onload]`);
+		gisLoaded();
+	}
+	document.body.appendChild(client_script);
+
+	const charts_script = document.createElement('script');
+	charts_script.setAttribute('src','https://www.gstatic.com/charts/loader.js');
+	charts_script.defer = true;
+	charts_script.async = true;
+	charts_script.onload = () => {
+		console.log(`[charts_script.onload]`);
+		console.log(`[charts_script.onload] google.charts: ${google.charts}`);
+		console.log(`[charts_script.onload] google.visualization: ${google.visualization}`);
+		// https://stackoverflow.com/a/23495572/257561
+		// https://developers.google.com/chart/interactive/docs/gallery/ganttchart
+		google.charts.load('current', {'packages':['gantt']});
+		// gisLoaded();
+	}
+	document.body.appendChild(charts_script);
+	
+
+</script>
+
+<script>
+	function test() {
+		console.log(`[test]`)
+		console.log(`[test] window.gapiLoaded: ${typeof window.gapiLoaded}`)
+		console.log(`[test] window.gisLoaded: ${typeof window.gisLoaded}`)
+	}
+</script>
+
+<!-- <script async defer src="https://apis.google.com/js/api.js" onload="test()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="test()"></script> -->
+<!-- <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script> -->
+
+<!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
 </body>
 </html>

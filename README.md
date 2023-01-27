@@ -116,3 +116,4 @@ The column **`dependencies`** tells which tasks the current task depends on. It 
 
 > "I think ezgantt is a great tool for small-medium projects, 
 > it's easy to learn (took me minutes to get a good chart) and maintain."
+
