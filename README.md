@@ -1,12 +1,16 @@
 # Colabo.Manager
 
-It helps viewing a Google Spreadsheet as a Gantt Chart
+It helps view a Google Spreadsheet as a Gantt Chart
 
 Repo: http://github.com/cha-OS/colabo.manager
 
 (NOTE: The project originates from the Google ezGantt project: https://github.com/google/ezgantt)
 
 Colabo.Manager uses public Google Chart and Google Drive JavaScript APIs, so the same users who can view the Spreadsheet can see the Gantt chart.
+
+## Try
+
+Not working currently, check in [DEVELOPMENT](./DEVELOPMENT.md) on how to run it.
 
 To **try it**, go to https://manager.colabo.space/#/#1zYmWtZh0gNxhtFMC0YVwBwzfH9Iy_7viTFGo2Ot5B8s where the demo sheet will be visualized as a gantt chart.
 
@@ -79,41 +83,3 @@ Anything that is not digit will be removed. Both `75` and `75%` tells that `75%`
 ### dependencies
 
 The column **`dependencies`** tells which tasks the current task depends on. It is a list of task ids, separated with comma. All rules of normalization for `taskid` are also valid here: ` A_do it :) , A_GENerate ` is equal as `a_doit,a_generate`
-
-# References
-
-* https://developers.google.com/chart/interactive/docs/gallery/ganttchart
-* https://developers.google.com/sheets/api/quickstart/js
-* https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/get
-
-# Info Colabo
-
-1) https://github.com/cha-OS/colabo.manager
-2) koristi Google API za pristup spreadsheet-u
-3) koristi Google API za generisanje gantt-a (kao drawing lib, kao bilboard.js, ok?
-4) kreirah Google API kljuceve i sve
-5) kreirah nas server https://manager.colabo.space/
-
-И овдје имаш примјер: https://manager.colabo.space/#1ALE236gG3fn2Wakk3oFSYyuNaanbs-wv5q8GHJXGISU
-
-# Legacy
-
-## Running on Google Cloud
-
-`gcloud app deploy -q --project ezgantt --version 1 --verbosity=info app.yaml`
-
-* app id: ezgantt
-* api key, client id, client secret: see JS files.
-
-+ In your gCloud project add APIs
-    + Google Sheets API
-    + Google Drive API
-+ create both type of  credentials
-    + Simple: API key
-    + Authorized: OAuth 2.0 credentials
-
-## Quotes
-
-> "I think ezgantt is a great tool for small-medium projects, 
-> it's easy to learn (took me minutes to get a good chart) and maintain."
-

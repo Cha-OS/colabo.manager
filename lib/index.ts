@@ -124,8 +124,14 @@ async function getSheet(resp) {
     let spreadsheet:gapi.client.sheets.Spreadsheet = resp.result;
     console.log('spreadsheet', spreadsheet);
     document.getElementById('pageTitle').innerHTML = spreadsheet.properties.title;
-    // console.log('Found ' + spreadsheet.sheets.length + ' worksheets.');
-    let sheet:gapi.client.sheets.Sheet = spreadsheet.sheets.find(sheet => sheet.properties.title.toLowerCase().includes(GANTT_SHEET_NAME));
+    let sheet:gapi.client.sheets.Sheet = spreadsheet.sheets.find(sheet => {
+		if (!sheet.properties.title) {
+			console.error("[getSheet] sheet.properties.title is empty");
+			return false;
+		}
+		sheet.properties.title.toLowerCase().includes(GANTT_SHEET_NAME)
+		return sheet;
+	});	
 
     if(!sheet){
         window.alert("[getSheet] We couldn't find the sheet with name '"+ GANTT_SHEET_NAME +"'")
@@ -138,6 +144,9 @@ async function getSheet(resp) {
  * @param id - id to be normalized and returned
  */
 function normalizeId(id:string):string{
+	if(!id) {
+		console.error("[normalizeId] id is empty");
+	}
     return id.toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
@@ -146,6 +155,7 @@ function normalizeId(id:string):string{
  * @param id - id to be normalized and returned
  */
 function normalizeIdsList(ids:string):string{
+	if(!ids) console.error("[normalizeIdsList] ids is empty");
     return ids.toLowerCase().replace(/[^a-z0-9,]/g, '')
 }
 
@@ -279,6 +289,9 @@ async function displayGantt(rows:RowData[]): Promise<void> {
         rowData.push(row[COLUMN_TASK_NAME]);
 
         // Resource
+		if(!row[COLUMN_RESOURCE]){
+			console.error("[displayGantt]%s Missing the resource, setting it to `null`", getRowIdString(row[RAW_ROW_ID]));
+		}
         rowData.push(row[COLUMN_RESOURCE] ? row[COLUMN_RESOURCE].toLowerCase().trim() : null);
 
         // Start date
